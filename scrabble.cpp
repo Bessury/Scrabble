@@ -1,7 +1,8 @@
 #include <iostream>
+#include <fstream>
 #include <vector>
+#include <stdexcept>
 #include <unordered_map>
-
 
 enum class Mult {
     NRM,
@@ -16,47 +17,69 @@ struct Cell {
     char l;
     Mult m;
 };
+/*
+ maybe we should use constuction like this std::map<Mult, char> colour_mult = {{Mult::NRM, '_'}, {Mult::DL, 'G'} ...
+ to easy convert ?
+*/
+char MultToCharColour(Mult m){
+    switch (m) {
+		case Mult::NRM:
+			return '_';
+		case Mult::DL:
+			return 'G';
+		case Mult::DW:
+			return 'B';
+		case Mult::TL:
+			return 'Y';
+		case Mult::TW:
+			return 'R';
+		default:
+			throw std::invalid_argument("MultToCharColour");
+	}
+}
 
+
+Mult ColourChartoMult (char c) {
+    switch (c) {
+		case '_':
+			return Mult::NRM;
+		case 'G':
+			return Mult::DL;
+		case 'B':
+			return Mult::DW;
+		case 'Y':
+			return Mult::TL;
+		case 'R':
+			return Mult::TW;
+		default:
+			throw std::invalid_argument("ColourChartoMult");
+	}
+}
 
 class Board {
 public:
     explicit Board( std::size_t n_rows = 15,
                     std::size_t n_cols = 15,
-                    const std::string& source = "default") : rows(n_rows, std::vector<Cell>(n_cols)),
+					const std::string& source = "default_board.txt") : rows(n_rows, std::vector<Cell>(n_cols)),
                                                              cols(n_cols, std::vector<Cell>(n_rows)) {
         if (source != "default")
             LoadBoardFromFile(source);
         else
-            MakeBoard(default_board);
+            LoadBoardFromFile(source);
 
     }
 
     void PrintBoard(){
         for (const auto& x : rows) {
-            for (auto z : x) {
-                switch (z.m) {
-                    case Mult::NRM:
-                        std::cout << '_' << ' ';
-                        break;
-                    case Mult::DL:
-                        std::cout << "G ";
-                        break;
-                    case Mult::DW:
-                        std::cout << "B ";
-                        break;
-                    case Mult::TL:
-                        std::cout << "Y ";
-                        break;
-                    case Mult::TW:
-                        std::cout << "R ";
-                        break;
-                    default:
-                        break;
+            std::cout <<"| ";
+			for (auto z : x) {
+					std::cout << MultToCharColour(z.m) << " ";
                 }
+				std::cout <<"|"<< std::endl;
             }
-            std::cout << std::endl;
+            
         }
-    }
+    
 
 
 private:
@@ -64,34 +87,20 @@ private:
     std::vector<std::vector<Cell>> cols;
 
     void LoadBoardFromFile(const std::string& source) {
-    }
-
-    void MakeBoard(const std::vector<std::vector<Mult>>& board) {
-        for (size_t row = 0; row < board.size(); row++){
-            for (size_t col = 0; col < board[0].size(); col++){
-                rows[row][col].m = board[row][col];
-                cols[col][row].m = board[col][row];
-            }
-        }
-    }
-
-    const std::vector<std::vector<Mult>> default_board{
-            {Mult::TW, Mult::NRM, Mult::NRM, Mult::DL, Mult::NRM, Mult::NRM, Mult::NRM, Mult::TW, Mult::NRM, Mult::NRM, Mult::NRM, Mult::DL, Mult::NRM, Mult::NRM, Mult::TW},
-            {Mult::NRM, Mult::DW, Mult::NRM, Mult::NRM, Mult::NRM, Mult::TL, Mult::NRM, Mult::NRM, Mult::NRM, Mult::TL, Mult::NRM, Mult::NRM, Mult::NRM, Mult::DW, Mult::NRM},
-            {Mult::NRM, Mult::NRM, Mult::DW, Mult::NRM, Mult::NRM, Mult::NRM, Mult::DL, Mult::NRM, Mult::DL, Mult::NRM, Mult::NRM, Mult::NRM, Mult::DW, Mult::NRM, Mult::NRM},
-            {Mult::DL, Mult::NRM, Mult::NRM, Mult::DW, Mult::NRM, Mult::NRM, Mult::NRM, Mult::DL, Mult::NRM, Mult::NRM, Mult::NRM, Mult::DW, Mult::NRM, Mult::NRM, Mult::DL},
-            {Mult::NRM, Mult::NRM, Mult::NRM, Mult::NRM, Mult::DW, Mult::NRM, Mult::NRM, Mult::NRM, Mult::NRM, Mult::NRM, Mult::DW, Mult::NRM, Mult::NRM, Mult::NRM, Mult::NRM},
-            {Mult::NRM, Mult::TL, Mult::NRM, Mult::NRM, Mult::NRM, Mult::NRM, Mult::NRM, Mult::NRM, Mult::NRM, Mult::NRM, Mult::NRM, Mult::NRM, Mult::NRM, Mult::TL, Mult::NRM},
-            {Mult::NRM, Mult::NRM, Mult::DL, Mult::NRM, Mult::NRM, Mult::NRM, Mult::DL, Mult::NRM, Mult::DL, Mult::NRM, Mult::NRM, Mult::NRM, Mult::DL, Mult::NRM, Mult::NRM},
-            {Mult::TW, Mult::NRM, Mult::NRM, Mult::DL, Mult::NRM, Mult::NRM, Mult::NRM, Mult::NRM, Mult::NRM, Mult::NRM, Mult::NRM, Mult::DL, Mult::NRM, Mult::NRM, Mult::TW},
-            {Mult::NRM, Mult::NRM, Mult::DL, Mult::NRM, Mult::NRM, Mult::NRM, Mult::DL, Mult::NRM, Mult::DL, Mult::NRM,Mult::NRM, Mult::NRM, Mult::DL, Mult::NRM, Mult::NRM},
-            {Mult::NRM, Mult::TL, Mult::NRM, Mult::NRM, Mult::NRM, Mult::NRM, Mult::NRM, Mult::NRM, Mult::NRM, Mult::NRM, Mult::NRM, Mult::NRM, Mult::NRM, Mult::TL, Mult::NRM},
-            {Mult::NRM, Mult::NRM, Mult::NRM, Mult::NRM, Mult::DW, Mult::NRM, Mult::NRM, Mult::NRM, Mult::NRM, Mult::NRM, Mult::DW, Mult::NRM, Mult::NRM, Mult::NRM, Mult::NRM},
-            {Mult::DL, Mult::NRM, Mult::NRM, Mult::DW, Mult::NRM, Mult::NRM, Mult::NRM, Mult::DL, Mult::NRM, Mult::NRM, Mult::NRM, Mult::DW, Mult::NRM, Mult::NRM, Mult::DL},
-            {Mult::NRM, Mult::NRM, Mult::DW, Mult::NRM, Mult::NRM, Mult::NRM, Mult::DL, Mult::NRM, Mult::DL, Mult::NRM, Mult::NRM, Mult::NRM, Mult::DW, Mult::NRM, Mult::NRM},
-            {Mult::NRM, Mult::DW, Mult::NRM, Mult::NRM, Mult::NRM, Mult::TL, Mult::NRM, Mult::NRM, Mult::NRM, Mult::TL, Mult::NRM, Mult::NRM, Mult::NRM, Mult::DW, Mult::NRM},
-            {Mult::TW, Mult::NRM, Mult::NRM, Mult::DL, Mult::NRM, Mult::NRM, Mult::NRM, Mult::TW, Mult::NRM, Mult::NRM, Mult::NRM, Mult::DL, Mult::NRM, Mult::NRM, Mult::TW}
-    };
+		std::ifstream fin(source);
+		if(!fin.is_open()) {
+			throw std::logic_error("UploadDictFromFile: File can't be opened");
+		} else {
+			for (size_t row = 0; row < rows.size(); row++){
+				for (size_t col = 0; col < cols.size(); col++){
+					char c; fin >> c;
+					Mult temp = ColourChartoMult(c);
+					rows[row][col].m = temp;
+					cols[col][row].m = temp;
+				}
+			}
+		}
+	}
 };
 
 
