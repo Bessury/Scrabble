@@ -18,7 +18,7 @@ struct Cell {
     Mult m;
 };
 /*
- maybe we should use constuction like this std::map<Mult, char> colour_mult = {{Mult::NRM, '_'}, {Mult::DL, 'G'} ...
+ maybe we should use construction like this std::map<Mult, char> colour_mult = {{Mult::NRM, '_'}, {Mult::DL, 'G'} ...
  to easy convert ?
 */
 char MultToCharColour(Mult m){
@@ -62,11 +62,7 @@ public:
                     std::size_t n_cols = 15,
 					const std::string& source = "default_board.txt") : rows(n_rows, std::vector<Cell>(n_cols)),
                                                              cols(n_cols, std::vector<Cell>(n_rows)) {
-        if (source != "default")
-            LoadBoardFromFile(source);
-        else
-            LoadBoardFromFile(source);
-
+        LoadBoardFromFile(source);
     }
 
     void PrintBoard(){
@@ -103,9 +99,18 @@ private:
 	}
 };
 
-
+class Player{
+private:
+    const std::string name_;
+    size_t score_ = 0;
+    std::vector<std::string> history_words_
+public:
+    Player(cosnt std::string& name)
+};
 
 class Game {
+public:
+    Game(Player, Board, )
 private:
     std::unordered_map<char, std::size_t> bags_of_letters {
             {'a', 9}, {'e', 12}, {'i', 9}, {'o', 8}, {'u', 4}, {'l', 4},
@@ -113,6 +118,8 @@ private:
             {'b', 2}, {'c', 2}, {'m', 2}, {'p', 2},
             {'f', 2}, {'h', 2}, {'v', 2}, {'w', 2}, {'y',2},
             {'k', 1}, {'j', 1}, {'x', 1}, {'q', 1}, {'z', 1} };
+
+    std::set<std::string> set_of_words;
 
     const std::unordered_map<char, std::size_t> scores{
             {'a',1}, {'e',1}, {'i',1}, {'o',1}, {'u',1}, {'l',1},
@@ -123,9 +130,16 @@ private:
             {'k',5},
             {'j',8}, {'x',8},
             {'q',10}, {'z',10}
-    };
+
+    LoadDict(){
+
+    }
+    }
 
 };
+
+
+
 
 
 
