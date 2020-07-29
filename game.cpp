@@ -119,13 +119,13 @@ private:
     std::string name {};
     size_t score {0};
     std::vector<std::string> history_words {};
-    std::set<char> set_of_letters {}; //maybe array<HAND_SIZE>
+    std::vector<char> set_of_letters {}; //maybe array<HAND_SIZE>
 public:
     Player(std::string n, Bag& bag) : name(std::move(n)) { // пока что для теста передаем мешок, как параметр
         for (size_t i = 0; i < HAND_SIZE; i++) { 
             char c = bag.GenerateLetter();
             bag.Decrease(c);
-            set_of_letters.insert(c);
+            set_of_letters.push_back(c);
         } 
     }
 
